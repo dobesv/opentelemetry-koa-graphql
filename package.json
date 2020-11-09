@@ -29,8 +29,6 @@
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-flow": "^7.12.1",
     "@babel/register": "^7.12.1",
-    "babel-plugin-graphql-tag": "^3.1.0",
-    "babel-plugin-import-graphql": "^2.7.0",
     "nodemon": "^2.0.6"
   }
 }
