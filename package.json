@@ -1,0 +1,36 @@
+{
+  "name": "test-koa",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "DEBUG=app:* nodemon --ext js,gql,graphql -r ./node.babel.js -- --tls-min-v1.0 src/index"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^3.1.0",
+    "@opentelemetry/instrumentation-graphql": "^0.11.0",
+    "@opentelemetry/koa-instrumentation": "^0.11.0",
+    "@opentelemetry/node": "^0.12.0",
+    "@opentelemetry/plugin-http": "^0.12.0",
+    "@opentelemetry/plugin-https": "^0.12.0",
+    "apollo-server-koa": "^2.19.0",
+    "graphql": "^15.4.0",
+    "graphql-tag": "^2.11.0",
+    "koa": "^2.13.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/helper-plugin-utils": "^7.10.4",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-export-default-from": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-flow": "^7.12.1",
+    "@babel/register": "^7.12.1",
+    "babel-plugin-graphql-tag": "^3.1.0",
+    "babel-plugin-import-graphql": "^2.7.0",
+    "nodemon": "^2.0.6"
+  }
+}

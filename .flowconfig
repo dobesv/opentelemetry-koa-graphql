@@ -1,0 +1,26 @@
+[libs]
+flow-typed
+
+[lints]
+all=error
+
+[strict]
+deprecated-type
+nonstrict-import
+sketchy-null
+unclear-type
+unsafe-getters-setters
+untyped-import
+untyped-type-import
+
+[options]
+lazy_mode=ide
+module.file_ext=.js
+module.file_ext=.gql
+module.file_ext=.graphql
+esproposal.optional_chaining=enable
+
+[ignore]
+<PROJECT_ROOT>/node_modules/graphql/.*
+<PROJECT_ROOT>/node_modules/graphql-tag/.*
+# .*node_modules.*
