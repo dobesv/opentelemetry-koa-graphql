@@ -1,47 +1,49 @@
-// @flow strict
-import opentelemetry from '@opentelemetry/api';
+import { GraphQLInstrumentation } from "@opentelemetry/instrumentation-graphql";
+import {
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+} from "@opentelemetry/tracing";
+import { lightstep } from "lightstep-opentelemetry-launcher-node";
 
-import { GraphQLInstrumentation } from '@opentelemetry/instrumentation-graphql';
-import { LogLevel } from '@opentelemetry/core';
+export let startPromise = null;
 
-import { NodeTracerProvider } from '@opentelemetry/node';
-import { ConsoleSpanExporter, BatchSpanProcessor, SimpleSpanProcessor } from '@opentelemetry/tracing';
+export const start = async () => {
+  console.log("start");
 
-const provider = new NodeTracerProvider({
-  logLevel: LogLevel.WARN,
-  // plugins: {
-  //   dns: { enabled: false, path: '@opentelemetry/plugin-dns' },
-  //   http: { enabled: false, path: '@opentelemetry/plugin-http' },
-  //   https: { enabled: false, path: '@opentelemetry/plugin-https' },
-  //   pg: { enabled: false, path: '@opentelemetry/plugin-pg' },
-  //   'pg-pool': { enabled: false, path: '@opentelemetry/plugin-pg-pool' },
-  //   grpc: { enabled: false, path: '@opentelemetry/plugin-grpc' },
-  //   'grpc-js': { enabled: false, path: '@opentelemetry/plugin-grpc-js' },
-  //   koa: {
-  //     enabled: false,
-  //     // You may use a package name or absolute path to the file.
-  //     path: '@opentelemetry/koa-instrumentation',
-  //   },
-  // },
-});
+  const serviceName = process.env.LS_SERVICE_NAME || "test";
+  const serviceVersion = process.env.APP_VERSION || "test";
+  const collectorTraceExporter = new ConsoleSpanExporter();
+  collectorTraceExporter._exportInfo = (span) => ({
+    traceId: span.spanContext.traceId,
+    parentId: span.parentSpanId,
+    name: span.name,
+    id: span.spanContext.spanId,
+  });
+  const spanProcessor = new SimpleSpanProcessor(collectorTraceExporter);
+  const graphQLInstrumentation = new GraphQLInstrumentation({
+    enabled: true,
+    mergeItems: true,
+  });
+  startPromise = lightstep
+    .configureOpenTelemetry({
+      autoDetectResources: false,
+      plugins: {
+        koa: {
+          enabled: false,
+          path: "@opentelemetry/koa-instrumentation",
+        },
+      },
+      serviceName,
+      serviceVersion,
+      spanEndpoint: "https://localhost:9999/api/v2/otel/trace",
+      spanProcessor,
+    })
+    .start();
+  //console.log('calling graphQLInstrumentation.enable()');
+  graphQLInstrumentation.enable();
+  //console.log('called graphQLInstrumentation.enable()');
 
+  await startPromise;
 
-const graphQLInstrumentation = new GraphQLInstrumentation({
-  // allowAttributes: true,
-  // depth: 2,
-  // mergeItems: true,
-});
-
-graphQLInstrumentation.setTracerProvider(provider);
-graphQLInstrumentation.enable();
-
-provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
-
-// Initialize the OpenTelemetry APIs to use the NodeTracerProvider bindings
-provider.register();
-
-const tracer = opentelemetry.trace;
-
-export default (): $FlowFixMe => {
-  return tracer;
+  console.log("started");
 };
