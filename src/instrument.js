@@ -35,13 +35,15 @@ const graphQLInstrumentation = new GraphQLInstrumentation({
 graphQLInstrumentation.setTracerProvider(provider);
 graphQLInstrumentation.enable();
 
-provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
+const collectorTraceExporter = new ConsoleSpanExporter();
+collectorTraceExporter._exportInfo = (span) => ({
+  traceId: span.spanContext.traceId,
+  parentId: span.parentSpanId,
+  name: span.name,
+  id: span.spanContext.spanId,
+});
+const spanProcessor = new SimpleSpanProcessor(collectorTraceExporter);
+provider.addSpanProcessor(spanProcessor);
 
 // Initialize the OpenTelemetry APIs to use the NodeTracerProvider bindings
 provider.register();
-
-const tracer = opentelemetry.trace;
-
-export default (): $FlowFixMe => {
-  return tracer;
-};

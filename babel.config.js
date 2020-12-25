@@ -18,7 +18,6 @@ module.exports = {
   ],
 
   plugins: [
-    'graphql-tag',
     'import-graphql',
     '@babel/plugin-proposal-export-default-from',
     '@babel/plugin-proposal-class-properties',
