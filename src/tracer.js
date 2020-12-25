@@ -20,7 +20,7 @@ export const start = async () => {
     id: span.spanContext.spanId,
   });
   const spanProcessor = new SimpleSpanProcessor(collectorTraceExporter);
-  const graphQLInstrumentation = new GraphQLInstrumentation({
+  new GraphQLInstrumentation({
     enabled: true,
     mergeItems: true,
   });
@@ -40,7 +40,9 @@ export const start = async () => {
     })
     .start();
   //console.log('calling graphQLInstrumentation.enable()');
-  graphQLInstrumentation.enable();
+  //
+  //
+  // graphQLInstrumentation.enable();
   //console.log('called graphQLInstrumentation.enable()');
 
   await startPromise;
